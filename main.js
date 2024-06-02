@@ -7,6 +7,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
         reader.onload = function(e) {
             const text = e.target.result;
             const data = parseCSV(text);
+            localStorage.setItem('csvData', JSON.stringify(data)); // Save data to localStorage
             displayData(data);
         };
         reader.readAsText(file);
