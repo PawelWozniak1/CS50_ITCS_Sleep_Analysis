@@ -17,6 +17,19 @@
         input[type="file"] {
             margin: 20px 0;
         }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #eee;
+        }
         #results {
             margin-top: 20px;
         }
@@ -41,9 +54,9 @@
         });
 
         function parseCSV(text) {
-            const lines = text.split('\n');
-            const headers = lines[0].split(',');
-            const rows = lines.slice(1).map(line => line.split(','));
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const headers = lines[0].split(',').map(header => header.trim());
+            const rows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
             return { headers, rows };
         }
 
