@@ -1,0 +1,25 @@
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+}
+h1 {
+    color: #333;
+}
+input[type="file"] {
+    margin: 20px 0;
+}
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #eee;
+}

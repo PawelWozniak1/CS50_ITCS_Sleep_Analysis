@@ -4,89 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analiza Danych Snów</title>
-    <style>
-        body {
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #333;
-        }
-        input[type="file"] {
-            margin: 20px 0;
-        }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-            width: 80%;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #eee;
-        }
-        #results {
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Analiza Danych Snów</h1>
-    <input type="file" id="fileInput" accept=".csv">
+    <form id="uploadForm">
+        <input type="file" id="fileInput" accept=".csv">
+        <button type="submit">Wgraj plik</button>
+    </form>
     <div id="results"></div>
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const text = e.target.result;
-                    const data = parseCSV(text);
-                    displayData(data);
-                };
-                reader.readAsText(file);
-            }
-        });
-
-        function parseCSV(text) {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            const headers = lines[0].split(',').map(header => header.trim());
-            const rows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
-            return { headers, rows };
-        }
-
-        function displayData(data) {
-            const { headers, rows } = data;
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-            const headerRow = document.createElement('tr');
-            headers.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            rows.forEach(row => {
-                const tr = document.createElement('tr');
-                row.forEach(cell => {
-                    const td = document.createElement('td');
-                    td.textContent = cell;
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            resultsDiv.appendChild(table);
-        }
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>
