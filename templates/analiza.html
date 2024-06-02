@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Analiza
+{% endblock %}
+
+{% block content %}
+<h1>Analiza</h1>
+<form id="dateForm">
+    <label for="dateSelect">Wybierz datę:</label>
+    <select id="dateSelect"></select>
+    <button type="submit">Analizuj</button>
+</form>
+<div id="analysisResults"></div>
+<script src="{{ url_for('static', filename='analiza.js') }}"></script>
+{% endblock %}

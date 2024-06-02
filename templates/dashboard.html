@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+<p>Welcome, {{ name }}!</p>
+<form id="uploadForm">
+    <input type="file" id="fileInput" accept=".csv">
+    <button type="submit">Upload File</button>
+</form>
+<div id="results"></div>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+{% endblock %}
