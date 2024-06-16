@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const data = JSON.parse(localStorage.getItem('csvData'));
     if (data) {
         populateDateSelect(data);
+        displayData(data); // Display the data on page load
     }
 
     document.getElementById('dateForm').addEventListener('submit', function(event) {
@@ -64,4 +65,34 @@ function displayAnalysisResults(analysisResults) {
     } else {
         resultsDiv.textContent = 'No data available for the selected date.';
     }
+}
+
+// Add this function to display the data on the Analiza page
+function displayData(data) {
+    const { headers, rows } = data;
+    const resultsDiv = document.getElementById('results');
+    if (!resultsDiv) return;
+    resultsDiv.innerHTML = '';
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    resultsDiv.appendChild(table);
 }
