@@ -1,21 +1,44 @@
+// Add this event listener to load the data from localStorage when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const data = JSON.parse(localStorage.getItem('csvData'));
+    if (data) {
+        displayData(data);
+    }
+});
+
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
+    const resultsDiv = document.getElementById('results');
+    
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const text = e.target.result;
-            const data = parseCSV(text);
-            localStorage.setItem('csvData', JSON.stringify(data)); // Save data to localStorage
-            displayData(data);
+            try {
+                const text = e.target.result;
+                const data = parseCSV(text);
+                localStorage.setItem('csvData', JSON.stringify(data)); // Save data to localStorage
+                displayData(data);
+                resultsDiv.textContent = 'Plik został wgrany i przetworzony.';
+            } catch (error) {
+                resultsDiv.textContent = 'Błąd podczas przetwarzania pliku: ' + error.message;
+            }
+        };
+        reader.onerror = function() {
+            resultsDiv.textContent = 'Błąd podczas wczytywania pliku.';
         };
         reader.readAsText(file);
+    } else {
+        resultsDiv.textContent = 'Wybierz plik przed wysłaniem.';
     }
 });
 
 function parseCSV(text) {
     const lines = text.split('\n').filter(line => line.trim() !== '');
+    if (lines.length === 0) {
+        throw new Error('Plik jest pusty.');
+    }
     const headers = lines[0].split(',').map(header => header.trim());
     const rows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
     return { headers, rows };
