@@ -1,11 +1,3 @@
-// Add this event listener to load the data from localStorage when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    const data = JSON.parse(localStorage.getItem('csvData'));
-    if (data) {
-        displayData(data);
-    }
-});
-
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const fileInput = document.getElementById('fileInput');

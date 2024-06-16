@@ -46,4 +46,9 @@ table {
 th, td {
     border: 1px solid #ccc;
     padding: 8px;
-    text
+    text-align: center;
+}
+
+th {
+    background-color: #eee;
+}
