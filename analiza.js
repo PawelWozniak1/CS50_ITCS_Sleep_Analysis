@@ -31,7 +31,14 @@ function populateDateSelect(data) {
 function analyzeData(data, selectedDate) {
     const dateIndex = data.headers.indexOf('DATE');
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
-    return rows;
+    const headers = data.headers;
+    return rows.map(row => {
+        let rowData = {};
+        headers.forEach((header, index) => {
+            rowData[header] = row[index];
+        });
+        return rowData;
+    });
 }
 
 function displayAnalysisResults(analysisResults) {

@@ -12,7 +12,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
                 const data = parseCSV(text);
                 localStorage.setItem('csvData', JSON.stringify(data)); // Save data to localStorage
                 displayData(data);
-                resultsDiv.textContent = 'Plik został wgrany i przetworzony.';
+                resultsDiv.textContent = '';
             } catch (error) {
                 resultsDiv.textContent = 'Błąd podczas przetwarzania pliku: ' + error.message;
             }
