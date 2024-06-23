@@ -2,18 +2,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const storedData = sessionStorage.getItem('csvData');
     if (storedData) {
         const data = JSON.parse(storedData);
+        console.log("Loaded data from sessionStorage:", data); // Log loaded data
         populateDateSelect(data);
     }
 
     document.getElementById('dateForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const selectedDate = document.getElementById('dateSelect').value;
-        if (data && selectedDate) {
+        if (storedData && selectedDate) {
+            const data = JSON.parse(storedData);
+            console.log("Selected date:", selectedDate); // Log selected date
             const analysisResults = analyzeData(data, selectedDate);
-            const sleepScore = calculateSleepScore(analysisResults[0]);
-            displayAnalysisResults(analysisResults, sleepScore);
-            displayMethodology(analysisResults[0], sleepScore);
-            displayVisualization(analysisResults[0], sleepScore);
+            console.log("Analysis results:", analysisResults); // Log analysis results
+            const sleepScore = calculateSleepScore(analysisResults[0], data.headers);
+            console.log("Calculated sleep score:", sleepScore); // Log calculated sleep score
+            displayAnalysisResults(analysisResults, sleepScore, data.headers);
+            displayMethodology(analysisResults[0], sleepScore, data.headers);
+            displayVisualization(analysisResults[0], sleepScore, data.headers);
         }
     });
 });
@@ -38,7 +43,7 @@ function analyzeData(data, selectedDate) {
     return rows;
 }
 
-function calculateSleepScore(row) {
+function calculateSleepScore(row, headers) {
     const sleepScoreCoefficients = {
         intercept: 55.56016261,
         hoursOfSleep: 1.539953811,
@@ -47,10 +52,15 @@ function calculateSleepScore(row) {
         heartRateBelowResting: 0.101970572
     };
 
-    const hoursOfSleep = row[data.headers.indexOf('HOURS OF SLEEP')].split(':').reduce((acc, time) => (60 * acc) + +time) / 60;
-    const remSleep = parseFloat(row[data.headers.indexOf('REM SLEEP')]);
-    const deepSleep = parseFloat(row[data.headers.indexOf('DEEP SLEEP')]);
-    const heartRateBelowResting = parseFloat(row[data.headers.indexOf('HEART RATE BELOW RESTING')]);
+    const hoursOfSleepIndex = headers.indexOf('HOURS OF SLEEP');
+    const remSleepIndex = headers.indexOf('REM SLEEP');
+    const deepSleepIndex = headers.indexOf('DEEP SLEEP');
+    const heartRateIndex = headers.indexOf('HEART RATE BELOW RESTING');
+
+    const hoursOfSleep = row[hoursOfSleepIndex].split(':').reduce((acc, time) => (60 * acc) + +time) / 60;
+    const remSleep = parseFloat(row[remSleepIndex]);
+    const deepSleep = parseFloat(row[deepSleepIndex]);
+    const heartRateBelowResting = parseFloat(row[heartRateIndex]);
 
     const sleepScore = sleepScoreCoefficients.intercept +
         (sleepScoreCoefficients.hoursOfSleep * hoursOfSleep) +
@@ -61,14 +71,13 @@ function calculateSleepScore(row) {
     return sleepScore.toFixed(2);
 }
 
-function displayAnalysisResults(analysisResults, sleepScore) {
+function displayAnalysisResults(analysisResults, sleepScore, headers) {
     const resultsDiv = document.getElementById('analysisResults');
     resultsDiv.innerHTML = '';
     if (analysisResults.length > 0) {
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
-        const headers = Object.keys(analysisResults[0]);
         const headerRow = document.createElement('tr');
         headers.forEach(header => {
             const th = document.createElement('th');
@@ -78,9 +87,9 @@ function displayAnalysisResults(analysisResults, sleepScore) {
         thead.appendChild(headerRow);
         analysisResults.forEach(row => {
             const tr = document.createElement('tr');
-            headers.forEach(header => {
+            row.forEach(cell => {
                 const td = document.createElement('td');
-                td.textContent = row[header];
+                td.textContent = cell;
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
@@ -97,7 +106,7 @@ function displayAnalysisResults(analysisResults, sleepScore) {
     }
 }
 
-function displayMethodology(row, sleepScore) {
+function displayMethodology(row, sleepScore, headers) {
     const methodologyDiv = document.getElementById('methodology');
     methodologyDiv.innerHTML = `
         <h2>Methodology</h2>
@@ -105,16 +114,16 @@ function displayMethodology(row, sleepScore) {
         <p><code>Sleep Score = 55.56 + (1.54 * Hours of Sleep) + (0.59 * REM Sleep) + (-0.04 * Deep Sleep) + (0.10 * Heart Rate Below Resting)</code></p>
         <p>For the selected date, the values are:</p>
         <ul>
-            <li>Hours of Sleep: ${row[data.headers.indexOf('HOURS OF SLEEP')]}</li>
-            <li>REM Sleep: ${row[data.headers.indexOf('REM SLEEP')]}</li>
-            <li>Deep Sleep: ${row[data.headers.indexOf('DEEP SLEEP')]}</li>
-            <li>Heart Rate Below Resting: ${row[data.headers.indexOf('HEART RATE BELOW RESTING')]}</li>
+            <li>Hours of Sleep: ${row[headers.indexOf('HOURS OF SLEEP')]}</li>
+            <li>REM Sleep: ${row[headers.indexOf('REM SLEEP')]}</li>
+            <li>Deep Sleep: ${row[headers.indexOf('DEEP SLEEP')]}</li>
+            <li>Heart Rate Below Resting: ${row[headers.indexOf('HEART RATE BELOW RESTING')]}</li>
         </ul>
         <p>The calculated sleep score is: ${sleepScore}</p>
     `;
 }
 
-function displayVisualization(row, sleepScore) {
+function displayVisualization(row, sleepScore, headers) {
     const visualizationDiv = document.getElementById('visualization');
     visualizationDiv.innerHTML = '<h2>Visualization</h2>';
 
@@ -123,6 +132,8 @@ function displayVisualization(row, sleepScore) {
     chartContainer.style.height = '370px';
     chartContainer.style.width = '100%';
     visualizationDiv.appendChild(chartContainer);
+
+    const hoursOfSleep = row[headers.indexOf('HOURS OF SLEEP')].split(':').reduce((acc, time) => (60 * acc) + +time) / 60;
 
     const chart = new CanvasJS.Chart('chartContainer', {
         animationEnabled: true,
@@ -136,10 +147,10 @@ function displayVisualization(row, sleepScore) {
         data: [{
             type: 'column',
             dataPoints: [
-                { label: 'Hours of Sleep', y: parseFloat(row[data.headers.indexOf('HOURS OF SLEEP')].split(':').reduce((acc, time) => (60 * acc) + +time) / 60).toFixed(2) },
-                { label: 'REM Sleep (%)', y: parseFloat(row[data.headers.indexOf('REM SLEEP')]) },
-                { label: 'Deep Sleep (%)', y: parseFloat(row[data.headers.indexOf('DEEP SLEEP')]) },
-                { label: 'Heart Rate Below Resting (%)', y: parseFloat(row[data.headers.indexOf('HEART RATE BELOW RESTING')]) },
+                { label: 'Hours of Sleep', y: hoursOfSleep },
+                { label: 'REM Sleep (%)', y: parseFloat(row[headers.indexOf('REM SLEEP')]) },
+                { label: 'Deep Sleep (%)', y: parseFloat(row[headers.indexOf('DEEP SLEEP')]) },
+                { label: 'Heart Rate Below Resting (%)', y: parseFloat(row[headers.indexOf('HEART RATE BELOW RESTING')]) },
                 { label: 'Sleep Score', y: parseFloat(sleepScore) }
             ]
         }]
