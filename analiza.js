@@ -14,11 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data && selectedDate) {
             const analysisResults = analyzeData(data, selectedDate);
             console.log('Analysis results:', analysisResults);
-            const sleepScore = calculateSleepScore(analysisResults[0]);
-            console.log('Calculated sleep score:', sleepScore);
-            displayAnalysisResults(analysisResults, sleepScore);
-            displayMethodology(analysisResults[0], sleepScore);
-            displayVisualization(analysisResults[0], sleepScore);
+            if (analysisResults.length > 0) {
+                const sleepScore = calculateSleepScore(analysisResults[0]);
+                console.log('Calculated sleep score:', sleepScore);
+                displayAnalysisResults(analysisResults, sleepScore);
+                displayMethodology(analysisResults[0], sleepScore);
+                displayVisualization(analysisResults[0], sleepScore);
+            } else {
+                console.error('No analysis results for selected date');
+            }
+        } else {
+            console.error('No data or date selected');
         }
     });
 });
