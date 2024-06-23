@@ -71,28 +71,62 @@ function displayData(data) {
 // Load data from sessionStorage on page load
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
     event.preventDefault();
-    console.log('Form submitted');
-    const fileInput = document.getElementById('csvFile');
+    const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
-    const reader = new FileReader();
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const data = parseCSV(text);
+            sessionStorage.setItem('csvData', JSON.stringify(data)); // Save data to sessionStorage
+            displayData(data);
+        };
+        reader.readAsText(file);
+    }
+});
 
-    reader.onload = function(e) {
-        console.log('File loaded');
-        const csvData = e.target.result;
-        const parsedData = Papa.parse(csvData, {
-            header: true,
-            dynamicTyping: true,
-            skipEmptyLines: true
+function parseCSV(text) {
+    const lines = text.split('\n').filter(line => line.trim() !== '');
+    const headers = lines[0].split(',').map(header => header.trim());
+    const rows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
+    return { headers, rows };
+}
+
+function displayData(data) {
+    const { headers, rows } = data;
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
         });
-        console.log('Parsed data:', parsedData);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    resultsDiv.appendChild(table);
+}
 
-        sessionStorage.setItem('csvData', JSON.stringify(parsedData.data));
-        console.log('Data saved to sessionStorage');
-
-        window.location.href = 'analiza.html';
-    };
-
-    reader.readAsText(file);
+// Load data from sessionStorage when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const storedData = sessionStorage.getItem('csvData');
+    if (storedData) {
+        const data = JSON.parse(storedData);
+        displayData(data);
+    }
 });
 
 
