@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const data = JSON.parse(sessionStorage.getItem('csvData'));
+    console.log('Loaded data:', data);
     if (data) {
         populateDateSelect(data);
     }
@@ -7,9 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('dateForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const selectedDate = document.getElementById('dateSelect').value;
+        console.log('Selected date:', selectedDate);
         if (data && selectedDate) {
             const analysisResults = analyzeData(data, selectedDate);
+            console.log('Analysis results:', analysisResults);
             const sleepScore = calculateSleepScore(analysisResults[0]);
+            console.log('Calculated sleep score:', sleepScore);
             displayAnalysisResults(analysisResults, sleepScore);
             displayMethodology(analysisResults[0], sleepScore);
             displayVisualization(analysisResults[0], sleepScore);
@@ -20,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function populateDateSelect(data) {
     const dateSelect = document.getElementById('dateSelect');
     const dateIndex = data.headers.indexOf('DATE');
+    console.log('Date index:', dateIndex);
     if (dateIndex !== -1) {
         const dates = [...new Set(data.rows.map(row => row[dateIndex]))];
         dates.forEach(date => {
