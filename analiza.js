@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded and parsed');
     const data = JSON.parse(sessionStorage.getItem('csvData'));
     console.log('Loaded data:', data);
     if (data) {
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('dateForm').addEventListener('submit', function(event) {
         event.preventDefault();
+        console.log('Form submitted');
         const selectedDate = document.getElementById('dateSelect').value;
         console.log('Selected date:', selectedDate);
         if (data && selectedDate) {
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function populateDateSelect(data) {
+    console.log('Populating date select');
     const dateSelect = document.getElementById('dateSelect');
     const dateIndex = data.headers.indexOf('DATE');
     console.log('Date index:', dateIndex);
@@ -37,12 +40,15 @@ function populateDateSelect(data) {
 }
 
 function analyzeData(data, selectedDate) {
+    console.log('Analyzing data for date:', selectedDate);
     const dateIndex = data.headers.indexOf('DATE');
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
+    console.log('Filtered rows:', rows);
     return rows;
 }
 
 function calculateSleepScore(row) {
+    console.log('Calculating sleep score for row:', row);
     const sleepScoreCoefficients = {
         intercept: 55.56016261,
         hoursOfSleep: 1.539953811,
@@ -62,10 +68,12 @@ function calculateSleepScore(row) {
         (sleepScoreCoefficients.deepSleep * deepSleep) +
         (sleepScoreCoefficients.heartRateBelowResting * heartRateBelowResting);
 
+    console.log('Calculated sleep score:', sleepScore);
     return sleepScore.toFixed(2);
 }
 
 function displayAnalysisResults(analysisResults, sleepScore) {
+    console.log('Displaying analysis results');
     const resultsDiv = document.getElementById('analysisResults');
     resultsDiv.innerHTML = '';
     if (analysisResults.length > 0) {
@@ -102,6 +110,7 @@ function displayAnalysisResults(analysisResults, sleepScore) {
 }
 
 function displayMethodology(row, sleepScore) {
+    console.log('Displaying methodology');
     const methodologyDiv = document.getElementById('methodology');
     methodologyDiv.innerHTML = `
         <h2>Methodology</h2>
@@ -119,6 +128,7 @@ function displayMethodology(row, sleepScore) {
 }
 
 function displayVisualization(row, sleepScore) {
+    console.log('Displaying visualization');
     const visualizationDiv = document.getElementById('visualization');
     visualizationDiv.innerHTML = '<h2>Visualization</h2>';
 
