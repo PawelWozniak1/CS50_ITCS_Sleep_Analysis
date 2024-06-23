@@ -10,7 +10,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
             try {
                 const text = e.target.result;
                 const data = parseCSV(text);
-                localStorage.setItem('csvData', JSON.stringify(data)); // Save data to localStorage
+                sessionStorage.setItem('csvData', JSON.stringify(data)); // Save data to sessionStorage
                 displayData(data);
                 resultsDiv.textContent = '';
             } catch (error) {
@@ -63,3 +63,11 @@ function displayData(data) {
     table.appendChild(tbody);
     resultsDiv.appendChild(table);
 }
+
+// Load data from sessionStorage on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const data = JSON.parse(sessionStorage.getItem('csvData'));
+    if (data) {
+        displayData(data);
+    }
+});

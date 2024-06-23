@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const data = JSON.parse(localStorage.getItem('csvData'));
+    const data = JSON.parse(sessionStorage.getItem('csvData'));
     if (data) {
         populateDateSelect(data);
     }
