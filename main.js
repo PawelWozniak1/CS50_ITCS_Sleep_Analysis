@@ -3,7 +3,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
     const resultsDiv = document.getElementById('results');
-    
+
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -11,18 +11,21 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
                 const text = e.target.result;
                 const data = parseCSV(text);
                 sessionStorage.setItem('csvData', JSON.stringify(data)); // Save data to sessionStorage
+                console.log('Data saved to sessionStorage:', data);
                 displayData(data);
-                resultsDiv.textContent = '';
             } catch (error) {
                 resultsDiv.textContent = 'Błąd podczas przetwarzania pliku: ' + error.message;
+                console.error('Error parsing CSV:', error);
             }
         };
         reader.onerror = function() {
             resultsDiv.textContent = 'Błąd podczas wczytywania pliku.';
+            console.error('FileReader error:', reader.error);
         };
         reader.readAsText(file);
     } else {
         resultsDiv.textContent = 'Wybierz plik przed wysłaniem.';
+        console.warn('No file selected');
     }
 });
 
@@ -62,6 +65,7 @@ function displayData(data) {
     table.appendChild(thead);
     table.appendChild(tbody);
     resultsDiv.appendChild(table);
+    console.log('Data displayed:', data);
 }
 
 // Load data from sessionStorage on page load
@@ -69,5 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const data = JSON.parse(sessionStorage.getItem('csvData'));
     if (data) {
         displayData(data);
+        console.log('Data loaded from sessionStorage on page load:', data);
+    } else {
+        console.log('No data in sessionStorage');
     }
 });
