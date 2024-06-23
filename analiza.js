@@ -117,7 +117,6 @@ function displayVisualization(row, sleepScore) {
     const visualizationDiv = document.getElementById('visualization');
     visualizationDiv.innerHTML = '<h2>Visualization</h2>';
 
-    // Create a simple bar chart using CanvasJS
     const chartContainer = document.createElement('div');
     chartContainer.id = 'chartContainer';
     chartContainer.style.height = '370px';
