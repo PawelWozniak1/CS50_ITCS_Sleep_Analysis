@@ -57,7 +57,7 @@ function calculateSleepScore(row) {
         heartRateBelowResting: 0.101970572
     };
 
-    const hoursOfSleep = parseFloat(row['HOURS OF SLEEP'].split(':').reduce((acc, time) => (60 * acc) + +time) / 60).toFixed(2);
+    const hoursOfSleep = row['HOURS OF SLEEP'].split(':').reduce((acc, time) => (60 * acc) + +time) / 60;
     const remSleep = parseFloat(row['REM SLEEP']);
     const deepSleep = parseFloat(row['DEEP SLEEP']);
     const heartRateBelowResting = parseFloat(row['HEART RATE BELOW RESTING']);

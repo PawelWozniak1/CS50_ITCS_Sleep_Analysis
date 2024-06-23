@@ -94,3 +94,4 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
 
     reader.readAsText(file);
 });
+
