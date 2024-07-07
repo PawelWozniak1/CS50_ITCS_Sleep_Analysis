@@ -120,14 +120,19 @@ function displayAdviceBasedOnScore(analysisResults) {
     const { sleepScore } = analysisResults;
     
     let advice;
+    let imagePath;
     if (sleepScore >= 85) {
         advice = "Your sleep score is excellent. Keep maintaining your current sleep habits.";
+        imagePath = 'images/excellent_sleep.jpg';
     } else if (sleepScore >= 70) {
         advice = "Your sleep score is good. Try to improve the duration and quality of your sleep for even better results.";
+        imagePath = 'images/good_sleep.jpg';
     } else {
         advice = "Your sleep score is below average. Consider reviewing your sleep habits and make necessary adjustments to improve your sleep quality.";
+        imagePath = 'images/below_average_sleep.jpg';
     }
 
     document.getElementById('adviceText').textContent = advice;
+    document.getElementById('adviceImage').src = imagePath;
     adviceDiv.style.display = 'block';
 }
