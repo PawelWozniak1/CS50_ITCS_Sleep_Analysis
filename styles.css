@@ -56,3 +56,21 @@ a {
 a:hover {
     text-decoration: underline;
 }
+#analysisResults table {
+    margin-top: 20px;
+}
+
+#calculationExplanation, #adviceBasedOnScore {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#adviceBasedOnScore img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 5px;
+}
