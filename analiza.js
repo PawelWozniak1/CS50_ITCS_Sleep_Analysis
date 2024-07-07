@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedDate = document.getElementById('dateSelect').value;
         if (data && selectedDate) {
             const analysisResults = analyzeData(data, selectedDate);
-            displayAnalysisResults(data); // Show full dataset
+            displayAnalysisResults(analysisResults); // Display data for the selected date
             displayCalculationExplanation(analysisResults);
             displayAdviceBasedOnScore(analysisResults);
         }
@@ -35,31 +35,31 @@ function analyzeData(data, selectedDate) {
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
     if (rows.length > 0) {
         const row = rows[0];
-        const hoursOfSleep = parseFloat(row[1].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
-        const remSleepPercentage = parseFloat(row[2]);
-        const deepSleepPercentage = parseFloat(row[3]);
-        const heartRateBelowResting = parseFloat(row[4]);
+        const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
+        const remSleepPercentage = parseFloat(row[3]);
+        const deepSleepPercentage = parseFloat(row[4]);
+        const heartRateBelowResting = parseFloat(row[5]);
         const sleepScore = (hoursOfSleep * 0.6) + (remSleepPercentage * 0.2) + (deepSleepPercentage * 0.15) + (heartRateBelowResting * 0.05);
-        return { row, sleepScore };
+        return { headers: data.headers, row, sleepScore };
     }
     return null;
 }
 
-function displayAnalysisResults(data) {
+function displayAnalysisResults(analysisResults) {
     const resultsDiv = document.getElementById('analysisResults');
     resultsDiv.innerHTML = '';
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-    const headers = data.headers;
-    const headerRow = document.createElement('tr');
-    headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    data.rows.forEach(row => {
+    if (analysisResults && analysisResults.row) {
+        const { headers, row } = analysisResults;
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        const headerRow = document.createElement('tr');
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
         const tr = document.createElement('tr');
         row.forEach(cell => {
             const td = document.createElement('td');
@@ -67,10 +67,12 @@ function displayAnalysisResults(data) {
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
-    });
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    resultsDiv.appendChild(table);
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        resultsDiv.appendChild(table);
+    } else {
+        resultsDiv.textContent = 'No data available for the selected date.';
+    }
 }
 
 function displayCalculationExplanation(analysisResults) {
@@ -80,10 +82,10 @@ function displayCalculationExplanation(analysisResults) {
 
     const explanationDiv = document.getElementById('calculationExplanation');
     const { row, sleepScore } = analysisResults;
-    const hoursOfSleep = parseFloat(row[1].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
-    const remSleepPercentage = parseFloat(row[2]);
-    const deepSleepPercentage = parseFloat(row[3]);
-    const heartRateBelowResting = parseFloat(row[4]);
+    const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
+    const remSleepPercentage = parseFloat(row[3]);
+    const deepSleepPercentage = parseFloat(row[4]);
+    const heartRateBelowResting = parseFloat(row[5]);
     
     explanationDiv.innerHTML = `
         <h2>Explanation of Sleep Score Calculation</h2>
