@@ -35,10 +35,10 @@ function analyzeData(data, selectedDate) {
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
     if (rows.length > 0) {
         const row = rows[0];
-        const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60));
-        const remSleepPercentage = parseFloat(row[3].replace('%', ''));
-        const deepSleepPercentage = parseFloat(row[4].replace('%', ''));
-        const heartRateBelowResting = parseFloat(row[5].replace('%', ''));
+        const hoursOfSleep = row[3].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m) / 60);
+        const remSleepPercentage = parseFloat(row[4].replace('%', ''));
+        const deepSleepPercentage = parseFloat(row[5].replace('%', ''));
+        const heartRateBelowResting = parseFloat(row[6].replace('%', ''));
         const sleepScore = (hoursOfSleep * 0.6) + (remSleepPercentage * 0.2) + (deepSleepPercentage * 0.15) + (heartRateBelowResting * 0.05);
         return { headers: data.headers, row, sleepScore };
     }
@@ -82,16 +82,16 @@ function displayCalculationExplanation(analysisResults) {
 
     const explanationDiv = document.getElementById('calculationExplanation');
     const { row, sleepScore } = analysisResults;
-    const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60));
-    const remSleepPercentage = parseFloat(row[3].replace('%', ''));
-    const deepSleepPercentage = parseFloat(row[4].replace('%', ''));
-    const heartRateBelowResting = parseFloat(row[5].replace('%', ''));
+    const hoursOfSleep = row[3].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m) / 60).toFixed(2);
+    const remSleepPercentage = parseFloat(row[4].replace('%', '')).toFixed(2);
+    const deepSleepPercentage = parseFloat(row[5].replace('%', '')).toFixed(2);
+    const heartRateBelowResting = parseFloat(row[6].replace('%', '')).toFixed(2);
 
     explanationDiv.innerHTML = `
         <h2>Explanation of Sleep Score Calculation</h2>
         <p>The sleep score is calculated using the following formula:</p>
         <ul>
-            <li>Hours of Sleep: ${hoursOfSleep.toFixed(2)} hours</li>
+            <li>Hours of Sleep: ${hoursOfSleep} hours</li>
             <li>REM Sleep: ${remSleepPercentage}%</li>
             <li>Deep Sleep: ${deepSleepPercentage}%</li>
             <li>Heart Rate Below Resting: ${heartRateBelowResting}%</li>
