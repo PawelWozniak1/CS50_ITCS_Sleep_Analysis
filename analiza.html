@@ -21,20 +21,7 @@
         <button type="submit">Analizuj</button>
     </form>
     <div id="analysisResults"></div>
-    <div id="calculationExplanation" style="display:none;">
-        <h2>Explanation of Sleep Score Calculation</h2>
-        <p>The sleep score is calculated using the following formula:</p>
-        <p>Hours of Sleep: <span id="hoursOfSleep"></span> (converted to hours)</p>
-        <p>REM Sleep: <span id="remSleepPercentage"></span>%</p>
-        <p>Deep Sleep: <span id="deepSleepPercentage"></span>%</p>
-        <p>Heart Rate Below Resting: <span id="heartRateBelowResting"></span>%</p>
-        <p>The weights for each component are:</p>
-        <p>Hours of Sleep: 0.6</p>
-        <p>REM Sleep: 0.2</p>
-        <p>Deep Sleep: 0.15</p>
-        <p>Heart Rate Below Resting: 0.05</p>
-        <p>The formula is: Sleep Score = (Hours of Sleep * 0.6) + (REM Sleep * 0.2) + (Deep Sleep * 0.15) + (Heart Rate Below Resting * 0.05)</p>
-    </div>
+    <div id="calculationExplanation" style="display:none;"></div>
     <div id="adviceBasedOnScore" style="display:none;">
         <h2>Advice Based on Sleep Score</h2>
         <p id="adviceText"></p>

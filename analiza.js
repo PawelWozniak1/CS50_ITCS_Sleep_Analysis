@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedDate = document.getElementById('dateSelect').value;
         if (data && selectedDate) {
             const analysisResults = analyzeData(data, selectedDate);
-            displayAnalysisResults(analysisResults);
-            displayExplanation(analysisResults);
+            displayAnalysisResults(analysisResults); // Display data for the selected date
+            displayCalculationExplanation(analysisResults);
             displayAdviceBasedOnScore(analysisResults);
         }
     });
@@ -35,39 +35,30 @@ function analyzeData(data, selectedDate) {
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
     if (rows.length > 0) {
         const row = rows[0];
-        const sleepScore = calculateSleepScore(row);
-        return { sleepScore, row };
+        const hoursOfSleep = row[3].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m) / 60);
+        const remSleepPercentage = parseFloat(row[4].replace('%', ''));
+        const deepSleepPercentage = parseFloat(row[5].replace('%', ''));
+        const heartRateBelowResting = parseFloat(row[6].replace('%', ''));
+        
+        // Regression formula to calculate sleep score
+        const sleepScore = 55.56016261 + 
+                           (1.539953811 * hoursOfSleep) + 
+                           (0.588553687 * remSleepPercentage) + 
+                           (-0.03744907 * deepSleepPercentage) + 
+                           (0.101970572 * heartRateBelowResting);
+        return { headers: data.headers, row, sleepScore };
     }
     return null;
-}
-
-function calculateSleepScore(row) {
-    const hoursOfSleep = convertTimeToHours(row[3]);
-    const remSleepPercentage = parseFloat(row[4]);
-    const deepSleepPercentage = parseFloat(row[5]);
-    const heartRateBelowResting = parseFloat(row[6]);
-
-    const sleepScore = (hoursOfSleep * 0.6) +
-                       (remSleepPercentage * 0.2) +
-                       (deepSleepPercentage * 0.15) +
-                       (heartRateBelowResting * 0.05);
-
-    return sleepScore.toFixed(2);
-}
-
-function convertTimeToHours(timeString) {
-    const [hours, minutes] = timeString.split(':').map(Number);
-    return hours + (minutes / 60);
 }
 
 function displayAnalysisResults(analysisResults) {
     const resultsDiv = document.getElementById('analysisResults');
     resultsDiv.innerHTML = '';
-    if (analysisResults && analysisResults.row.length > 0) {
+    if (analysisResults && analysisResults.row) {
+        const { headers, row } = analysisResults;
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
-        const headers = ['DATE', 'SLEEP SCORE', 'HOURS OF SLEEP', 'REM SLEEP', 'DEEP SLEEP', 'HEART RATE BELOW RESTING', 'SLEEP TIME'];
         const headerRow = document.createElement('tr');
         headers.forEach(header => {
             const th = document.createElement('th');
@@ -75,8 +66,6 @@ function displayAnalysisResults(analysisResults) {
             headerRow.appendChild(th);
         });
         thead.appendChild(headerRow);
-
-        const row = analysisResults.row;
         const tr = document.createElement('tr');
         row.forEach(cell => {
             const td = document.createElement('td');
@@ -84,7 +73,6 @@ function displayAnalysisResults(analysisResults) {
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
-
         table.appendChild(thead);
         table.appendChild(tbody);
         resultsDiv.appendChild(table);
@@ -93,18 +81,33 @@ function displayAnalysisResults(analysisResults) {
     }
 }
 
-function displayExplanation(analysisResults) {
+function displayCalculationExplanation(analysisResults) {
     if (!analysisResults) {
         return;
     }
+
     const explanationDiv = document.getElementById('calculationExplanation');
-    const row = analysisResults.row;
+    const { row, sleepScore } = analysisResults;
+    const hoursOfSleep = row[3].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m) / 60).toFixed(2);
+    const remSleepPercentage = parseFloat(row[4].replace('%', '')).toFixed(2);
+    const deepSleepPercentage = parseFloat(row[5].replace('%', '')).toFixed(2);
+    const heartRateBelowResting = parseFloat(row[6].replace('%', '')).toFixed(2);
 
-    document.getElementById('hoursOfSleep').textContent = convertTimeToHours(row[3]);
-    document.getElementById('remSleepPercentage').textContent = row[4];
-    document.getElementById('deepSleepPercentage').textContent = row[5];
-    document.getElementById('heartRateBelowResting').textContent = row[6];
-
+    explanationDiv.innerHTML = `
+        <h2>Explanation of Sleep Score Calculation</h2>
+        <p>The sleep score is calculated using the following formula:</p>
+        <p><strong>Sleep Score = 55.56016261 + (1.539953811 × Hours of Sleep) + (0.588553687 × REM Sleep) + (-0.03744907 × Deep Sleep) + (0.101970572 × Heart Rate Below Resting)</strong></p>
+        <p>For the selected date, the values are:</p>
+        <ul>
+            <li>Hours of Sleep: ${hoursOfSleep} hours</li>
+            <li>REM Sleep: ${remSleepPercentage}%</li>
+            <li>Deep Sleep: ${deepSleepPercentage}%</li>
+            <li>Heart Rate Below Resting: ${heartRateBelowResting}%</li>
+        </ul>
+        <p>Therefore, the sleep score is calculated as follows:</p>
+        <p><strong>Sleep Score = 55.56016261 + (1.539953811 × ${hoursOfSleep}) + (0.588553687 × ${remSleepPercentage}) + (-0.03744907 × ${deepSleepPercentage}) + (0.101970572 × ${heartRateBelowResting})</strong></p>
+        <p><strong>Calculated Sleep Score: ${sleepScore.toFixed(2)}</strong></p>
+    `;
     explanationDiv.style.display = 'block';
 }
 
@@ -114,8 +117,8 @@ function displayAdviceBasedOnScore(analysisResults) {
     }
 
     const adviceDiv = document.getElementById('adviceBasedOnScore');
-    const sleepScore = analysisResults.sleepScore;
-
+    const { sleepScore } = analysisResults;
+    
     let advice;
     let imagePath;
     if (sleepScore >= 85) {
