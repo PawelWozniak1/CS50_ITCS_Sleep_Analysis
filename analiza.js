@@ -39,7 +39,13 @@ function analyzeData(data, selectedDate) {
         const remSleepPercentage = parseFloat(row[4].replace('%', ''));
         const deepSleepPercentage = parseFloat(row[5].replace('%', ''));
         const heartRateBelowResting = parseFloat(row[6].replace('%', ''));
-        const sleepScore = (hoursOfSleep * 0.6) + (remSleepPercentage * 0.2) + (deepSleepPercentage * 0.15) + (heartRateBelowResting * 0.05);
+        
+        // Regression formula to calculate sleep score
+        const sleepScore = 55.56016261 + 
+                           (1.539953811 * hoursOfSleep) + 
+                           (0.588553687 * remSleepPercentage) + 
+                           (-0.03744907 * deepSleepPercentage) + 
+                           (0.101970572 * heartRateBelowResting);
         return { headers: data.headers, row, sleepScore };
     }
     return null;
@@ -90,20 +96,16 @@ function displayCalculationExplanation(analysisResults) {
     explanationDiv.innerHTML = `
         <h2>Explanation of Sleep Score Calculation</h2>
         <p>The sleep score is calculated using the following formula:</p>
+        <p><strong>Sleep Score = 55.56016261 + (1.539953811 × Hours of Sleep) + (0.588553687 × REM Sleep) + (-0.03744907 × Deep Sleep) + (0.101970572 × Heart Rate Below Resting)</strong></p>
+        <p>For the selected date, the values are:</p>
         <ul>
             <li>Hours of Sleep: ${hoursOfSleep} hours</li>
             <li>REM Sleep: ${remSleepPercentage}%</li>
             <li>Deep Sleep: ${deepSleepPercentage}%</li>
             <li>Heart Rate Below Resting: ${heartRateBelowResting}%</li>
         </ul>
-        <p>The weights for each component are:</p>
-        <ul>
-            <li>Hours of Sleep: 0.6</li>
-            <li>REM Sleep: 0.2</li>
-            <li>Deep Sleep: 0.15</li>
-            <li>Heart Rate Below Resting: 0.05</li>
-        </ul>
-        <p>The formula is: <strong>Sleep Score = (Hours of Sleep * 0.6) + (REM Sleep * 0.2) + (Deep Sleep * 0.15) + (Heart Rate Below Resting * 0.05)</strong></p>
+        <p>Therefore, the sleep score is calculated as follows:</p>
+        <p><strong>Sleep Score = 55.56016261 + (1.539953811 × ${hoursOfSleep}) + (0.588553687 × ${remSleepPercentage}) + (-0.03744907 × ${deepSleepPercentage}) + (0.101970572 × ${heartRateBelowResting})</strong></p>
         <p><strong>Calculated Sleep Score: ${sleepScore.toFixed(2)}</strong></p>
     `;
     explanationDiv.style.display = 'block';
