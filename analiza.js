@@ -35,10 +35,10 @@ function analyzeData(data, selectedDate) {
     const rows = data.rows.filter(row => row[dateIndex] === selectedDate);
     if (rows.length > 0) {
         const row = rows[0];
-        const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
-        const remSleepPercentage = parseFloat(row[3]);
-        const deepSleepPercentage = parseFloat(row[4]);
-        const heartRateBelowResting = parseFloat(row[5]);
+        const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60));
+        const remSleepPercentage = parseFloat(row[3].replace('%', ''));
+        const deepSleepPercentage = parseFloat(row[4].replace('%', ''));
+        const heartRateBelowResting = parseFloat(row[5].replace('%', ''));
         const sleepScore = (hoursOfSleep * 0.6) + (remSleepPercentage * 0.2) + (deepSleepPercentage * 0.15) + (heartRateBelowResting * 0.05);
         return { headers: data.headers, row, sleepScore };
     }
@@ -82,11 +82,11 @@ function displayCalculationExplanation(analysisResults) {
 
     const explanationDiv = document.getElementById('calculationExplanation');
     const { row, sleepScore } = analysisResults;
-    const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
-    const remSleepPercentage = parseFloat(row[3]);
-    const deepSleepPercentage = parseFloat(row[4]);
-    const heartRateBelowResting = parseFloat(row[5]);
-    
+    const hoursOfSleep = parseFloat(row[2].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60));
+    const remSleepPercentage = parseFloat(row[3].replace('%', ''));
+    const deepSleepPercentage = parseFloat(row[4].replace('%', ''));
+    const heartRateBelowResting = parseFloat(row[5].replace('%', ''));
+
     explanationDiv.innerHTML = `
         <h2>Explanation of Sleep Score Calculation</h2>
         <p>The sleep score is calculated using the following formula:</p>
