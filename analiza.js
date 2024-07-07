@@ -67,6 +67,10 @@ function displayAnalysisResults(analysisResults) {
 }
 
 function displayCalculationExplanation(analysisResults) {
+    if (!analysisResults) {
+        return;
+    }
+
     const explanationDiv = document.getElementById('calculationExplanation');
     const hoursOfSleep = parseFloat(analysisResults['HOURS OF SLEEP'].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
     const remSleepPercentage = parseFloat(analysisResults['REM SLEEP']);
@@ -96,6 +100,10 @@ function displayCalculationExplanation(analysisResults) {
 }
 
 function displayAdviceBasedOnScore(analysisResults) {
+    if (!analysisResults) {
+        return;
+    }
+
     const adviceDiv = document.getElementById('adviceText');
     const hoursOfSleep = parseFloat(analysisResults['HOURS OF SLEEP'].split(':').reduce((h, m) => parseFloat(h) + parseFloat(m)/60, 0));
     const remSleepPercentage = parseFloat(analysisResults['REM SLEEP']);
