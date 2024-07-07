@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedDate = document.getElementById('dateSelect').value;
         if (data && selectedDate) {
             const analysisResults = analyzeData(data, selectedDate);
-            displayAnalysisResults(analysisResults); // Display data for the selected date
+            displayAnalysisResults(analysisResults);
             displayCalculationExplanation(analysisResults);
             displayAdviceBasedOnScore(analysisResults);
         }
@@ -40,7 +40,6 @@ function analyzeData(data, selectedDate) {
         const deepSleepPercentage = parseFloat(row[5].replace('%', ''));
         const heartRateBelowResting = parseFloat(row[6].replace('%', ''));
         
-        // Regression formula to calculate sleep score
         const sleepScore = 55.56016261 + 
                            (1.539953811 * hoursOfSleep) + 
                            (0.588553687 * remSleepPercentage) + 
@@ -60,18 +59,26 @@ function displayAnalysisResults(analysisResults) {
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
-        headers.forEach(header => {
-            const th = document.createElement('th');
-            th.textContent = header;
-            headerRow.appendChild(th);
+        
+        headers.forEach((header, index) => {
+            if (header !== 'SLEEP SCORE') {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            }
         });
+
         thead.appendChild(headerRow);
+        
         const tr = document.createElement('tr');
-        row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
+        row.forEach((cell, index) => {
+            if (headers[index] !== 'SLEEP SCORE') {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            }
         });
+
         tbody.appendChild(tr);
         table.appendChild(thead);
         table.appendChild(tbody);
@@ -106,7 +113,7 @@ function displayCalculationExplanation(analysisResults) {
         </ul>
         <p>Therefore, the sleep score is calculated as follows:</p>
         <p><strong>Sleep Score = 55.56016261 + (1.539953811 × ${hoursOfSleep}) + (0.588553687 × ${remSleepPercentage}) + (-0.03744907 × ${deepSleepPercentage}) + (0.101970572 × ${heartRateBelowResting})</strong></p>
-        <p><strong>Calculated Sleep Score: ${sleepScore.toFixed(2)}</strong></p>
+        <p><strong>Calculated Sleep Score: <span style="font-size: 1.5em;">${sleepScore.toFixed(2)}</span></strong></p>
     `;
     explanationDiv.style.display = 'block';
 }
